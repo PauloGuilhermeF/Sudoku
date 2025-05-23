@@ -1,5 +1,3 @@
-
-
 // ============= SudokuGridPanel.java =============
 package br.com.dio.view;
 
@@ -28,7 +26,8 @@ public class SudokuGridPanel extends JPanel {
     private void initializeGrid() {
         setLayout(new GridLayout(3, 3, 4, 4));
         setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
-        setBackground(Color.BLACK);
+        // Mudança: fundo cinza claro ao invés de preto
+        setBackground(new Color(240, 240, 240));
 
         cells = new JButton[board.getGridSize()][board.getGridSize()];
 
@@ -42,7 +41,9 @@ public class SudokuGridPanel extends JPanel {
 
     private JPanel createSubGrid(int blockRow, int blockCol) {
         JPanel subGrid = new JPanel(new GridLayout(3, 3, 1, 1));
-        subGrid.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        // Borda mais visível
+        subGrid.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
+        subGrid.setBackground(new Color(240, 240, 240));
 
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
@@ -65,6 +66,9 @@ public class SudokuGridPanel extends JPanel {
         cell.setMargin(new Insets(0, 0, 0, 0));
         cell.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
         cell.setPreferredSize(new Dimension(CELL_SIZE, CELL_SIZE));
+
+        // Garantir que a célula seja opaca para mostrar a cor de fundo
+        cell.setOpaque(true);
 
         cell.addActionListener(e -> {
             selectCell(row, col);
@@ -91,12 +95,17 @@ public class SudokuGridPanel extends JPanel {
         JButton cell = cells[row][col];
 
         if (board.isOriginal(row, col)) {
-            cell.setBackground(selected ? new Color(200, 220, 250) : new Color(230, 230, 250));
+            // Células originais: fundo azul claro, texto preto
+            cell.setBackground(selected ? new Color(180, 200, 255) : new Color(220, 230, 255));
             cell.setForeground(Color.BLACK);
         } else {
-            cell.setBackground(selected ? new Color(255, 255, 200) : Color.WHITE);
-            cell.setForeground(Color.BLUE);
+            // Células editáveis: fundo branco/amarelo claro, texto azul escuro
+            cell.setBackground(selected ? new Color(255, 255, 180) : Color.WHITE);
+            cell.setForeground(new Color(0, 0, 150)); // Azul escuro para melhor contraste
         }
+
+        // Força a atualização visual
+        cell.repaint();
     }
 
     public void updateDisplay() {
@@ -114,12 +123,20 @@ public class SudokuGridPanel extends JPanel {
         cell.setText(value == 0 ? "" : String.valueOf(value));
 
         if (board.isOriginal(row, col)) {
-            cell.setBackground(new Color(230, 230, 250));
+            // Células originais (não editáveis): fundo azul claro, texto preto
+            cell.setBackground(new Color(220, 230, 255));
             cell.setForeground(Color.BLACK);
+            cell.setFont(new Font("Arial", Font.BOLD, 20));
         } else {
+            // Células editáveis pelo jogador: fundo branco, texto azul escuro
             cell.setBackground(Color.WHITE);
-            cell.setForeground(Color.BLUE);
+            cell.setForeground(new Color(0, 0, 150));
+            cell.setFont(new Font("Arial", Font.PLAIN, 20));
         }
+
+        // Garantir que as cores sejam aplicadas
+        cell.setOpaque(true);
+        cell.repaint();
     }
 
     public int getSelectedRow() {
